@@ -1774,6 +1774,7 @@ I18N["zh-CN"]["page-dashboard"] = { // 已登录的首页 - 仪表板（含组�
         "Forked from": "复刻自", // 复刻仓库
 
         // 中间栏
+        "Feed": "动态",
         "The home for all developers — including you.": "所有开发者的家园——包括您。",
         "Welcome to your personal dashboard, where you can find an introduction to how GitHub works, tools to help you build software, and help merging your first lines of code.": "欢迎来到您的个人仪表板，在这里您可以看到关于 GitHub 工作原理的介绍，帮助您构建软件的工具，以及帮助您合并您的第一行代码。",
         "Learn with a tutorial project": "通过教程项目学习",
@@ -2999,6 +3000,9 @@ I18N["zh-CN"]["settings-menu"] = { // 设置 - 公共部分
         "Notifications": "通知",
 
         "Access": "访问",
+        "Billing and plans": "账单和计划", // 旧版，暂时加回
+            "Plans and usage": "计划和使用情况",
+            "Spending limits": "支出限额",
         "Billing & Licensing": "账单 & 许可",
             "New": "新",
             "Usage": "使用情况",
@@ -3605,7 +3609,7 @@ I18N["zh-CN"]["settings/billing"] = { // 设置 - 账单和计划
         // 顶部提示
             "Successfully updated billing information.": "成功更新支付信息。",
             "For more information on using these billing pages": "有关使用这些账单页面的更多信息，",
-                "please refer to the docs content here": "请参阅此处的文档内容。",
+                "please refer to the docs content here": "请参阅此处的文档内容",
         
         // 概况
             "Current metered usage": "当前计费用量",
@@ -3644,6 +3648,7 @@ I18N["zh-CN"]["settings/billing"] = { // 设置 - 账单和计划
             "No usage found": "无数据",
             
             // 底下计算部分
+                "More": "更多", // 小屏模式
                 "View details": "详情",
                 "consumed usage -": "计费 -",
                 "in discounts =": "折扣 =",
@@ -3691,6 +3696,18 @@ I18N["zh-CN"]["settings/billing"] = { // 设置 - 账单和计划
                 "Actions macOS 3-core": "操作 macOS 三核",
             "Metered usage grouped by Repository": "分组：仓库",
                 "All other": "其他",
+
+            // 有上下文，后面重复部分直接省略
+            "Actions usage": "操作",
+            "Actions usage grouped by SKU": "操作 - 详细",
+            "Copilot usage": "Copilot",
+            "Copilot usage grouped by SKU": "Copilot - 详细",
+            "Codespaces usage": "代码空间",
+            "Codespaces usage grouped by SKU": "代码空间 - 详细",
+            "Git_lfs usage": "Git LFS",
+            "Git_lfs usage grouped by SKU": "Git LFS - 详细",
+            "Packages usage": "软件包",
+            "Packages usage grouped by SKU": "软件包 - 详细",
                 
             "Date": "日期",
             "SKUs": "库存单位",
@@ -4254,10 +4271,10 @@ I18N["zh-CN"]["settings/billing"] = { // 设置 - 账单和计划
             const translatedDate = dateRegExp.reduce((acc, [pattern, replacement]) => acc.replace(pattern, replacement), p1);
             return `${translatedDate}（UTC时间）`;
         }],
-        [/(Usage|codespaces|actions) (?:[^ ]+), (.+)/, (match, s1, p1) => {
+        [/(Usage|codespaces|actions|Codespaces storage|Actions Windows|Actions macOS 3-core|Actions Linux|Actions storage) (?:[^ ]+), (.+)/, (match, s1, p1) => {
             //const translatedP1 = I18N["zh-CN"]["public"]["time-regexp"][p1] || p1;
             //const translatedP2 = I18N["zh-CN"]["public"]["time-regexp"][p2] || p2;
-            var s1Key = {'Usage': '用量','actions': '操作', 'codespaces': '代码空间'};
+            var s1Key = {'Usage': '用量','actions': '操作', 'codespaces': '代码空间', 'Codespaces storage': '代码空间存储', 'Actions Windows': '操作 Windows', 'Actions Linux': '操作 Linux','Actions macOS 3-core': '操作 macOS 三核','Actions storage': "操作存储"};
             const dateRegExp = I18N["zh-CN"]["public"]["time-regexp"];
             const translatedDate = dateRegExp.reduce((acc, [pattern, replacement]) => acc.replace(pattern, replacement), p1);
             return `${translatedDate}` + s1Key[s1];// 星期几暂时省略
@@ -4281,6 +4298,16 @@ I18N["zh-CN"]["settings/billing"] = { // 设置 - 账单和计划
         }],
         [/This year \((\d+)\)/, "今年（$1）"],
         [/Last year \((\d+)\)/, "去年（$1）"],
+        [/(\d+)(AM|PM)/, (match, p1, p2) => {
+            // 运行规则：非12AM照搬，PM数字加12，12AM=0
+            let hour = parseInt(p1, 10);
+            if (p2 === "PM" && hour !== 12) {
+                hour += 12;
+            } else if (p2 === "AM" && hour === 12) {
+                hour = 0;
+            }
+            return `${hour}:00`;
+        }], // 计费用量 - 今天图表下方时间
         [/Top five repositories (today|this month|last month|this year|last year)/, function(all, time) {
             var timeKey = {
                 'today': '今天',
@@ -5214,6 +5241,7 @@ I18N["zh-CN"]["settings/copilot"] = { // 设置 - GitHub Copilot
                 "You currently have an active": "您当前拥有有效的",
                 "Copilot Pro subscription": "GitHub Copilot Pro 订阅",
                 "Get started by installing the extension in your preferred IDE.": "首先在您首选的 IDE 中安装扩展。",
+                "Get started by installing the extension in your preferred environment.": "首先在您首选环境中安装扩展。",
                 "Copilot in your IDE": "集成在 IDE",
                 "Copilot in the CLI": "在终端中使用",
                 "Chat in GitHub Mobile": "在 GitHub Mobile 中使用",
@@ -10522,6 +10550,7 @@ I18N["zh-CN"]["repository/commit"] = { // 仓库 - 提交页面
         [/expand all lines: ([^ ]+)/, "展开全部：$1"],
         [/collapse file: ([^ ]+)/, "折叠文件：$1"],
         [/collapse non diff lines: ([^ ]+)/, "折叠无差异行：$1"],
+        [/(\d+) tags?/, "$1 标签"], // 出现位置：某提交所跨标签数
     ],
 };
 
@@ -24217,6 +24246,19 @@ I18N["zh-CN"]["copilot"] = {
                     "Delete link": "删除",
                         "Delete shared link and remove access for all users": "删除分享链接并移除所有用户的访问权限",
                 "Copy link": "复制链接",
+
+            // 分享
+            "Shared": "已分享",
+            "Conversation shared": "对话已分享",
+                "Only users with access to referenced private content can view this conversation.": "只有有权访问相关私人内容的用户才能查看此对话。",
+                "This conversation is private and only visible to you. Share it to make it accessible to others with the link.": "此对话为私密对话，仅您自己可见。通过分享链接，其他人才能访问此对话。",
+                "This conversation is now shared. Anyone with the link can view it. Keep in mind that it is live and publicly accessible.": "此对话已共享。任何拥有该链接的人均可查看此对话。请注意，该对话为实时且公开可访问的内容。",
+                "Conversation link will appear here after sharing": "对话链接将在分享后出现",
+                "Only visible to you": "私密",
+                "Visible to anyone with the link": "拥有链接者可见",
+
+                "Unshare": "取消",
+
             "Open menu": "菜单",
                 "Conversation": "对话",
                 "Prompt": "提示词",
@@ -24286,6 +24328,7 @@ I18N["zh-CN"]["copilot"] = {
                         "Search repositories": "搜索仓库",
                         "Fetching repositories…": "正在获取仓库",
                     "Close": "关闭",
+                "Image…": "图片…",
                 "Extension…": "扩展…",
                 "Extension": "扩展",
                     "Extensions": "扩展",
